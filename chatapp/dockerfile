@@ -1,0 +1,27 @@
+# Usamos una imagen oficial de Python como base
+FROM python:3.9.5
+
+# Establecemos una variable de entorno para deshabilitar el buffer en Python
+ENV PYTHONUNBUFFERED=1
+
+# Actualizamos pip y las dependencias en una sola capa
+RUN python -m pip install --upgrade pip
+
+# Copiamos el archivo de requisitos y luego instalamos las dependencias
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Establecemos el directorio de trabajo general
+# Cambiamos el directorio de trabajo donde está el proyecto Django
+WORKDIR /opt/back_end/chatapp
+#WORKDIR /opt/back_end
+
+# Copiamos todo el proyecto al contenedor
+COPY . /opt/back_end
+
+# Cambiamos el directorio de trabajo donde está el proyecto Django
+#WORKDIR /opt/back_end/chatapp
+
+# Si es necesario, instalamos vim (pero se recomienda eliminar esta línea si no es esencial)
+RUN apt-get update && apt-get -y install vim && rm -rf /var/lib/apt/lists/*
+CMD python manage.py runserver 0.0.0.0:8000
